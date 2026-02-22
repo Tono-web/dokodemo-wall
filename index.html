@@ -52,19 +52,29 @@
         // 中心の印（エレンの家 / シガンシナ区想定）
         L.marker([lat, lng]).addTo(wallLayers).bindPopup("シガンシナ区（中心点）").openPopup();
 
-        const walls = [
-            { name: "ウォール・マリア", radius: 480000, color: "#e74c3c" },
-            { name: "ウォール・ローゼ", radius: 380000, color: "#e67e22" },
-            { name: "ウォール・シーナ", radius: 250000, color: "#f1c40f" }
+    const walls = [
+            { name: "ウォール・マリア", radius: 480000, color: "#ff0000" }, // 鮮やかな赤
+            { name: "ウォール・ローゼ", radius: 380000, color: "#ff8c00" }, // 濃いオレンジ
+            { name: "ウォール・シーナ", radius: 250000, color: "#ffffff" }  // 白（一番目立ちます）
         ];
 
         walls.forEach(wall => {
             L.circle([lat, lng], {
                 radius: wall.radius,
-                color: wall.color,
-                weight: 4,
+                color: "#000000", // 縁取り（黒）
+                weight: 6,        // 少し太く
+                opacity: 0.5,
+                fill: false,
+                interactive: false
+            }).addTo(wallLayers);
+
+            L.circle([lat, lng], {
+                radius: wall.radius,
+                color: wall.color, // メインの色
+                weight: 3,         // 中の線
+                opacity: 1,
                 fillOpacity: 0.05,
-                dashArray: '10, 10' // 壁っぽい点線
+                dashArray: '10, 10'
             }).addTo(wallLayers).bindTooltip(wall.name);
         });
     }
@@ -79,5 +89,6 @@
 </script>
 </body>
 </html>
+
 
 
