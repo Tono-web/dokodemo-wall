@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>どこでも進撃の巨人 - 三重の壁シミュレーター</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #map { height: 100vh; width: 100%; background: #1a1a1a; }
+        body { margin: 0; padding: 0; font-family: 'serif'; }
+        .info-panel {
+            position: absolute; top: 10px; left: 50px; z-index: 1000;
+            background: rgba(255, 255, 255, 0.9); padding: 15px; border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 2px solid #8b0000;
+        }
+        h1 { margin: 0 0 10px 0; font-size: 18px; color: #8b0000; }
+        .legend { font-size: 12px; line-height: 1.6; }
+    </style>
+</head>
+<body>
+
+<div class="info-panel">
+    <h1>どこでも三重の壁</h1>
+    <div class="legend">
+        地図をクリックすると、そこに<br><b>人類最後の砦</b>が出現します。<br><br>
+        <span style="color:#e74c3c">■</span> <b>ウォール・マリア</b> (半径480km)<br>
+        <span style="color:#e67e22">■</span> <b>ウォール・ローゼ</b> (半径380km)<br>
+        <span style="color:#f1c40f">■</span> <b>ウォール・シーナ</b> (半径250km)
+    </div>
+</div>
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    // 1. 地図の初期化（少し暗めのレイヤーを使用）
+    const map = L.map('map').setView([35.6895, 139.6917], 6);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap',
+        className: 'map-tiles'
+    }).addTo(map);
+
+    let wallLayers = L.layerGroup().addTo(map);
+
+    // 2. 壁を描画する関数
+    function drawWalls(lat, lng) {
+        wallLayers.clearLayers();
+
+        // 中心の印（エレンの家 / シガンシナ区想定）
+        L.marker([lat, lng]).addTo(wallLayers).bindPopup("シガンシナ区（中心点）").openPopup();
+
+        const walls = [
+            { name: "ウォール・マリア", radius: 480000, color: "#e74c3c" },
+            { name: "ウォール・ローゼ", radius: 380000, color: "#e67e22" },
+            { name: "ウォール・シーナ", radius: 250000, color: "#f1c40f" }
+        ];
+
+        walls.forEach(wall => {
+            L.circle([lat, lng], {
+                radius: wall.radius,
+                color: wall.color,
+                weight: 4,
+                fillOpacity: 0.05,
+                dashArray: '10, 10' // 壁っぽい点線
+            }).addTo(wallLayers).bindTooltip(wall.name);
+        });
+    }
+
+    // 3. クリックで再配置
+    map.on('click', function(e) {
+        drawWalls(e.latlng.lat, e.latlng.lng);
+    });
+
+    // 初回描画（東京中心）
+    drawWalls(35.6895, 139.6917);
+</script>
+</body>
+</html>
