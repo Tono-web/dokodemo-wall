@@ -49,38 +49,36 @@
     function drawWalls(lat, lng) {
         wallLayers.clearLayers();
 
-        // 中心の印
         L.marker([lat, lng]).addTo(wallLayers).bindPopup("シガンシナ区（中心点）").openPopup();
 
         const walls = [
-            { name: "ウォール.マリア", radius: 480000, color: "#ff0000" }, // 赤
-            { name: "ウォール.ローゼ", radius: 380000, color: "#ff8c00" }, // 濃いオレンジ
-            { name: "ウォール.シーナ", radius: 250000, color: "#ffd700" }  // 濃い黄色(ゴールド)
+            { name: "ウォール・マリア", radius: 480000, color: "#FF3333" }, // 鮮やかなネオンレッド
+            { name: "ウォール・ローゼ", radius: 380000, color: "#FF9900" }, // 鮮やかなサンセットオレンジ
+            { name: "ウォール・シーナ", radius: 250000, color: "#FFFF00" }  // 輝く純黄色
         ];
 
         walls.forEach(wall => {
-            // 背景に黒い縁取りを描画して見やすくする
+            // 外側にぼんやりとした光（グロー効果）のような太い線を配置
             L.circle([lat, lng], {
                 radius: wall.radius,
-                color: "#000000", 
-                weight: 6,
-                opacity: 0.6,
+                color: wall.color,
+                weight: 12,    // 太くして
+                opacity: 0.2,  // かなり透明にする（これで光って見える）
                 fill: false,
                 interactive: false
             }).addTo(wallLayers);
 
-            // メインの色の線
+            // メインの線
             L.circle([lat, lng], {
                 radius: wall.radius,
                 color: wall.color,
-                weight: 3,
-                opacity: 1,
+                weight: 4,
+                opacity: 0.8,
                 fillOpacity: 0.05,
-                dashArray: '10, 10'
+                // dashArrayを外すと、より「壁」としての境界線がハッキリして映えます
             }).addTo(wallLayers).bindTooltip(wall.name);
         });
     }
-
     // 3. クリックで再配置
     map.on('click', function(e) {
         drawWalls(e.latlng.lat, e.latlng.lng);
@@ -91,6 +89,7 @@
 </script>
 </body>
 </html>
+
 
 
 
